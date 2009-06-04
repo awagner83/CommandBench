@@ -3,22 +3,39 @@
 Repeat given command n number of times
 
 usage:
-    repeat.py n command
+    bench.py n command
     ex: repeat.py 10 ls -al
 """
 
-import subprocess
+from subprocess import Popen
+from os import tmpfile
 import sys
-import os
-
-output = open('output','w+')
 
 try:
+    # Create buffer to collect stats per run
+    statsBuffer = tmpfile()
+    outputBuffer = tmpfile()
+
+    # Parse command-line opts
     n = int( sys.argv[1] )
     command = sys.argv[2:]
-    for i in range( n ): 
-        subprocess.Popen( 'time ' + ' '.join(command), 
-                shell='sh', stderr=output )
+
+    # Run benchmark
+    for i in range( n ):
+        # Capture pre-bench file pointer
+        start = statsBuffer.tell()
+
+        # Run given command
+        Popen( 'time ' + ' '.join(command), 
+                shell=True, stdout=outputBuffer, stderr=statsBuffer ).wait()
+
+        # Read captured stats
+        statsBuffer.seek(start)
+        print statsBuffer.read().splitlines()[2]
+
+    # Close Buffer
+    statsBuffer.close()
+    
 except IndexError:
     print __doc__
 
