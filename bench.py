@@ -9,6 +9,7 @@ usage:
 
 from subprocess import Popen
 from os import tmpfile
+from pprint import pprint
 import sys
 
 try:
@@ -19,6 +20,9 @@ try:
     # Parse command-line opts
     n = int( sys.argv[1] )
     command = sys.argv[2:]
+
+    # Init stat storage
+    stats = {}
 
     # Run benchmark
     for i in range( n ):
@@ -31,7 +35,15 @@ try:
 
         # Read captured stats
         statsBuffer.seek(start)
-        print statsBuffer.read().splitlines()[2]
+        for statLine in statsBuffer.read().splitlines():
+            try: type, time = statLine.split("\t")
+            except: continue
+
+            try: stats[type][0]
+            except: stats[type] = []
+            stats[type].append(time)
+
+    pprint( stats )
 
     # Close Buffer
     statsBuffer.close()
