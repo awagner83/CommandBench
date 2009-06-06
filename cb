@@ -21,7 +21,7 @@
 Command-line application benchmarking software
 
 usage:
-    bench.py n command
+    cb n command
     ex: repeat.py 10 ls -al
 """
 
