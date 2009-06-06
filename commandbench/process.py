@@ -48,6 +48,12 @@ class Controller:
         # Init stat storage
         stats = {}
 
+        print "This is CommandBench, http://github.com/awagner83/CommandBench/"
+        print "Copyright (C) 2009 Adam Wagner <awagner83@gmail.com>", "\n"
+        print "Benchmarking", "'"+' '.join(self.command)+"'", \
+            self.repetitions, "times."
+        print "Please be patient...", "\n"
+
         # Run benchmark
         for i in range( self.repetitions ):
             # Capture pre-bench file pointer
@@ -67,7 +73,10 @@ class Controller:
                 except: stats[type] = []
                 stats[type].append(parsetime(time))
 
-        pprint( stats )
+        # Output results
+        for type, times in stats.iteritems():
+            sum = reduce(lambda x, y: x+y, times)
+            print type.ljust(6), 'avg:', sum / len(times), '  total:', sum
 
         # Close Buffer
         statsBuffer.close()
