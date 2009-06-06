@@ -24,6 +24,7 @@ from subprocess import Popen
 from os import tmpfile
 from pprint import pprint
 from commandbench.time import parsetime
+from commandbench.about import copyright_line
 
 class Controller:
     """
@@ -48,8 +49,7 @@ class Controller:
         # Init stat storage
         stats = {}
 
-        print "This is CommandBench, http://github.com/awagner83/CommandBench/"
-        print "Copyright (C) 2009 Adam Wagner <awagner83@gmail.com>", "\n"
+        print copyright_line, "\n"
         print "Benchmarking", "'"+' '.join(self.command)+"'", \
             self.repetitions, "times."
         print "Please be patient...", "\n"
