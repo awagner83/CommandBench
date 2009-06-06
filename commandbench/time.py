@@ -1,4 +1,3 @@
-#!/bin/env python
 #------------------------------------------------------------------------#
 # CommandBench - All-purpose command-line application benchmarking tool
 # Copyright (C) 2009 Adam Wagner <awagner83@gmail.com>
@@ -18,26 +17,23 @@
 #------------------------------------------------------------------------#
 
 """
-Command-line application benchmarking software
-
-usage:
-    cb n command
-    ex: repeat.py 10 ls -al
+Time handling utilities
 """
 
-if __name__ == '__main__':
+from datetime import timedelta
+import re
+
+class ParseTimeError: pass
+
+def parsetime(timestring):
+    # Compile and run regex
+    regex = re.compile(r'(?P<minutes>[0-9]+)m(?P<seconds>[0-9]+\.[0-9]+)s')
+    match = regex.match(timestring) 
     
-    from commandbench.process import Controller
-    import sys
+    # Error out if no match was found
+    if match is None: raise ParseTimeError()
 
-    try:
-        # Parse command-line opts
-        repetitions = int( sys.argv[1] )
-        command = sys.argv[2:]
+    return timedelta( minutes=int(match.group('minutes')), 
+            seconds=float(match.group('seconds')) )
 
-        # Create controller and execute
-        Controller(command, repetitions).run()
-        
-    except IndexError:
-        print __doc__
 

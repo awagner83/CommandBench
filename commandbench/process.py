@@ -23,6 +23,7 @@ Application Process Classes
 from subprocess import Popen
 from os import tmpfile
 from pprint import pprint
+from commandbench.time import parsetime
 
 class Controller:
     """
@@ -64,7 +65,7 @@ class Controller:
 
                 try: stats[type][0]
                 except: stats[type] = []
-                stats[type].append(time)
+                stats[type].append(parsetime(time))
 
         pprint( stats )
 
