@@ -26,7 +26,13 @@ setup(  name = about.name,
         author_email = about.email,
         url = about.website,
         description = about.description,
+        license = about.license,
         packages = ['commandbench'],
-        data_files = [('bin', ['cb'])]  )
+        data_files = [('bin', ['cb'])],
+        classifiers = ['Programming Language :: Python',
+            'License :: OSI Approved :: GNU General Public License (GPL)',
+            'Environment :: Console',
+            'Intended Audience :: Developers']
+     )
 
 

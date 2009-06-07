@@ -27,6 +27,7 @@ author = 'Adam Wagner'
 email = 'awagner83@gmail.com'
 version = '0.1'
 copyright_year = '2009'
+license = 'GNU General Public License (GPL)'
 
 copyright_line = ('This is {name} v{version}, {website}\n'\
-        + 'Copyright (C) {copyright_year} {author} <{email}>').format( **locals() )
+    + 'Copyright (C) {copyright_year} {author} <{email}>').format(**locals())
