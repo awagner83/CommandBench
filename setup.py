@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 #------------------------------------------------------------------------#
 # CommandBench - All-purpose command-line application benchmarking tool
 # Copyright (C) 2009 Adam Wagner <awagner83@gmail.com>
@@ -16,17 +17,16 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #------------------------------------------------------------------------#
 
-"""
-Application MetaData
-"""
+from distutils.core import setup
+from commandbench import about
 
-name = 'CommandBench'
-description = 'All-purpose command-line application benchmarking tool'
-website = 'http://github.com/awagner83/CommandBench/'
-author = 'Adam Wagner'
-email = 'awagner83@gmail.com'
-version = '0.1'
-copyright_year = '2009'
+setup(  name = about.name,
+        version = about.version,
+        author = about.author,
+        author_email = about.email,
+        url = about.website,
+        description = about.description,
+        packages = ['commandbench'],
+        data_files = [('bin', ['cb'])]  )
 
-copyright_line = ('This is {name} v{version}, {website}\n'\
-        + 'Copyright (C) {copyright_year} {author} <{email}>').format( **locals() )
+
