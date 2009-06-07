@@ -18,26 +18,25 @@
 #------------------------------------------------------------------------#
 
 """
-Command-line application benchmarking software
-
-usage:
-    cb n command
-    ex: repeat.py 10 ls -al
+CLI interface to CommandBench
 """
 
 if __name__ == '__main__':
     
     from commandbench.process import Controller
-    import sys
+    from optparse import OptionParser
+    
+    # Parse command-line opts
+    parser = OptionParser( 'Usage: %prog [options] COMMAND' )
+    parser.add_option('-n', '--number', dest='repetitions', type="int",
+            help='number of times to repeat COMMAND', default=1)
+    options, command = parser.parse_args()
 
-    try:
-        # Parse command-line opts
-        repetitions = int( sys.argv[1] )
-        command = sys.argv[2:]
-
+    if len( command ):
         # Create controller and execute
-        Controller(command, repetitions).run()
-        
-    except IndexError:
-        print __doc__
+        Controller(command, options.repetitions).run()
+    else:
+        from commandbench.about import copyright_line
+        print copyright_line, "\n"
+        parser.print_help()
 
