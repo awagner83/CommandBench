@@ -1,4 +1,3 @@
-#!/bin/env python
 #------------------------------------------------------------------------#
 # CommandBench - All-purpose command-line application benchmarking tool
 # Copyright (C) 2009 Adam Wagner <awagner83@gmail.com>
@@ -17,29 +16,22 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #------------------------------------------------------------------------#
 
-"""
-CLI interface to CommandBench
-"""
+from commandbench.about import copyright_line
 
-if __name__ == '__main__':
-    
-    from commandbench.process import Controller
-    from optparse import OptionParser
-    
-    # Parse command-line opts
-    parser = OptionParser( 'Usage: %prog [options] COMMAND' )
-    parser.add_option('-n', '--number', dest='repetitions', type="int",
-            help='number of times to repeat COMMAND (default: 1)', default=1)
-    parser.add_option('-c', '--concurrency', dest='concurrency', type='int',
-            help='maximum number of processes to run simultaneously (default: 1)',
-            default=1)
-    options, command = parser.parse_args()
+def init_display(controller):
 
-    if len( command ):
-        # Create controller and execute
-        Controller(command, options.repetitions, options.concurrency).run()
-    else:
-        from commandbench.about import copyright_line
-        print copyright_line, "\n"
-        parser.print_help()
+    # Output app intro
+    print copyright_line, "\n"
+    print "Benchmarking", "'"+' '.join(controller.command)+"'", \
+        controller.repetitions, "times (concurrency level", \
+        str(controller.concurrency) + ")"
+    print "Please be patient...", "\n"
+    
+
+def output_results(stats):
+
+    # Output results
+    for type, times in stats.iteritems():
+        sum = reduce(lambda x, y: x+y, times)
+        print type.ljust(6), 'avg:', sum / len(times), '  total:', sum
 

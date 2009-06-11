@@ -25,7 +25,7 @@ from os import tmpfile
 from pprint import pprint
 from multiprocessing import Pool
 from commandbench.time import parsetime
-from commandbench.about import copyright_line
+from commandbench.cli import init_display, output_results
 
 class Controller:
     """
@@ -43,8 +43,8 @@ class Controller:
 
     def __init__(self, command, repetitions=1, concurrency=1):
         self.command = command
-        self.repetitions = repetitions
-        self.concurrency = concurrency
+        self.repetitions = repetitions if repetitions else 1
+        self.concurrency = concurrency if concurrency else 1
 
     def run(self):
         # Init stat storage
@@ -53,14 +53,12 @@ class Controller:
         # Init multi-proc pool & base worker
         pool = Pool(self.concurrency)
 
-        # Output app intro
-        print copyright_line, "\n"
-        print "Benchmarking", "'"+' '.join(self.command)+"'", \
-            self.repetitions, "times."
-        print "Please be patient...", "\n"
+        # Output initial greeting/please wait message
+        init_display(self)
 
         # Run benchmark
-        for result in pool.map(run_command, [self.command for x in range(self.repetitions)]):
+        for result in pool.map(run_command, \
+                [self.command for x in range(self.repetitions)]):
             # Read captured stats
             for statLine in result.splitlines():
                 try: type, time = statLine.split("\t")
@@ -71,27 +69,20 @@ class Controller:
                 stats[type].append(parsetime(time))
 
         # Output results
-        for type, times in stats.iteritems():
-            sum = reduce(lambda x, y: x+y, times)
-            print type.ljust(6), 'avg:', sum / len(times), '  total:', sum
+        output_results(stats)
 
 
 def run_command(command):
     # Create buffer to collect stats per run
-    statsBuffer = tmpfile()
-    outputBuffer = tmpfile()
+    with tmpfile() as outputBuffer:
+        with tmpfile() as statsBuffer:
+            # Run given command
+            Popen( 'time ' + ' '.join(command), 
+                    shell=True, stdout=outputBuffer, stderr=statsBuffer ).wait()
 
-    # Run given command
-    Popen( 'time ' + ' '.join(command), 
-            shell=True, stdout=outputBuffer, stderr=statsBuffer ).wait()
-
-    # Read captured stats
-    statsBuffer.seek(0)
-    result = statsBuffer.read()
-
-    # Close temp files
-    statsBuffer.close()
-    outputBuffer.close()
+            # Read captured stats
+            statsBuffer.seek(0)
+            result = statsBuffer.read()
 
     # Return our findings
     return result
