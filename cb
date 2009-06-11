@@ -30,11 +30,13 @@ if __name__ == '__main__':
     parser = OptionParser( 'Usage: %prog [options] COMMAND' )
     parser.add_option('-n', '--number', dest='repetitions', type="int",
             help='number of times to repeat COMMAND', default=1)
+    parser.add_option('-c', '--concurrency', dest='concurrency', type='int',
+            help='maximum number of processes to run simultaneously')
     options, command = parser.parse_args()
 
     if len( command ):
         # Create controller and execute
-        Controller(command, options.repetitions).run()
+        Controller(command, options.repetitions, options.concurrency).run()
     else:
         from commandbench.about import copyright_line
         print copyright_line, "\n"
