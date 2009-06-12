@@ -18,6 +18,8 @@
 
 from commandbench.about import copyright_line
 
+COLUMN_WIDTH = '10'
+
 def init_display(controller, display_options):
 
     # Check for quite flag
@@ -35,10 +37,15 @@ def init_display(controller, display_options):
 
 def output_results(stats, display_options):
 
+    headerFormat = ' '*10+(''.join(['{'+str(i)+':<'+COLUMN_WIDTH+'}' for i in range(4)]))
+    rowFormat = '{0:<10}'+(''.join(['{'+str(i)+':<'+COLUMN_WIDTH+'}' for i in range(1,5)]))
+    
+    # Output table header
+    print headerFormat.format( *('avg','total','min','max') )
+
     # Output results
     for type, times in stats.iteritems():
         sum = reduce(lambda x, y: x+y, times)
         avg = sum / len(times)
-        print type.ljust(6), 'avg:', avg, 'total:', sum, \
-                'min:', min(times), 'max:', max(times)
+        print rowFormat.format( *(type, avg, sum, min(times), max(times)) )
 
