@@ -25,7 +25,7 @@ description = 'All-purpose command-line application benchmarking tool'
 website = 'http://github.com/awagner83/CommandBench/'
 author = 'Adam Wagner'
 email = 'awagner83@gmail.com'
-version = '0.1'
+version = '0.2b'
 copyright_year = '2009'
 license = 'GNU General Public License (GPL)'
 
