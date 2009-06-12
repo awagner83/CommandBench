@@ -62,8 +62,23 @@ class Controller:
         init_display(self, self.display_options)
 
         # Run benchmark
-        for result in pool.map(run_command, \
-                [self.command for x in range(self.repetitions)]):
+        result = pool.map_async(run_command, \
+                [self.command for x in range(self.repetitions)])
+
+        # Wait for results
+        try:
+            while True:
+                result.wait(0.25)
+                if result.ready(): 
+                    results = result.get()
+                    break
+        except KeyboardInterrupt:
+            print "\nKeyboard Interrupt Caught. Terminating benchmark..."
+            pool.close()
+            exit(1)
+
+        # Parse results
+        for result in results:
             # Read captured stats
             for statLine in result.splitlines():
                 try: type, time = statLine.split("\t")
@@ -79,16 +94,20 @@ class Controller:
 
 def run_command(command):
     # Create buffer to collect stats per run
-    with tmpfile() as outputBuffer:
-        with tmpfile() as statsBuffer:
-            # Run given command
-            Popen( 'time ' + ' '.join(command), 
-                    shell=True, stdout=outputBuffer, stderr=statsBuffer ).wait()
+    try:
+        with tmpfile() as outputBuffer:
+            with tmpfile() as statsBuffer:
+                # Run given command
+                Popen( 'time ' + ' '.join(command), 
+                        shell=True, stdout=outputBuffer, stderr=statsBuffer ).wait()
 
-            # Read captured stats
-            statsBuffer.seek(0)
-            result = statsBuffer.read()
+                # Read captured stats
+                statsBuffer.seek(0)
+                result = statsBuffer.read()
 
-    # Return our findings
-    return result
+        # Return our findings
+        return result
+
+    except KeyboardInterrupt:
+        return ''
 
