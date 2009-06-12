@@ -43,7 +43,9 @@ class timedelta(timedelta):
         return str((self.days * 60*60*24) + self.seconds + self.microseconds / 1000000.0)
 
     def __add__(self, other):
-        return super(timedelta, self).__add__(other)
+        return timedelta( days = self.days + other.days, 
+                seconds = self.seconds + other.seconds,
+                microseconds = self.microseconds + other.microseconds )
 
     def __div__(self, other):
         # Ensure other is float
