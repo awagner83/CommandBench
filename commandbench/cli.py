@@ -20,11 +20,13 @@ from commandbench.about import copyright_line
 
 def init_display(controller):
 
-    # Output app intro
+    # Build app intro
+    intro = "Benchmarking '\x1b[1m{cmd}\x1b[0m' {rep} times (concurrency {concurrency})"
+
+    # Print intro
     print copyright_line, "\n"
-    print "Benchmarking", "'"+' '.join(controller.command)+"'", \
-        controller.repetitions, "times (concurrency level", \
-        str(controller.concurrency) + ")"
+    print intro.format( cmd=' '.join(controller.command), rep=controller.repetitions,\
+            concurrency=controller.concurrency )
     print "Please be patient...", "\n"
     
 
@@ -33,5 +35,7 @@ def output_results(stats):
     # Output results
     for type, times in stats.iteritems():
         sum = reduce(lambda x, y: x+y, times)
-        print type.ljust(6), 'avg:', sum / len(times), '  total:', sum
+        avg = sum / len(times)
+        print type.ljust(6), 'avg:', avg, 'total:', sum, \
+                'min:', min(times), 'max:', max(times)
 

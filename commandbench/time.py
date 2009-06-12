@@ -25,15 +25,29 @@ import re
 
 class ParseTimeError: pass
 
-def parsetime(timestring):
-    # Compile and run regex
-    regex = re.compile(r'(?P<minutes>[0-9]+)m(?P<seconds>[0-9]+\.[0-9]+)s')
-    match = regex.match(timestring) 
-    
-    # Error out if no match was found
-    if match is None: raise ParseTimeError()
+class timedelta(timedelta):
 
-    return timedelta( minutes=int(match.group('minutes')), 
-            seconds=float(match.group('seconds')) )
+    @classmethod
+    def from_string(cls, timestring):
+        # Compile and run regex
+        regex = re.compile(r'(?P<minutes>[0-9]+)m(?P<seconds>[0-9]+\.[0-9]+)s')
+        match = regex.match(timestring) 
+        
+        # Error out if no match was found
+        if match is None: raise ParseTimeError()
 
+        return cls( minutes=int(match.group('minutes')), 
+                seconds=float(match.group('seconds')) )
+
+    def __str__(self):
+        return str((self.days * 60*60*24) + self.seconds + self.microseconds / 1000000.0)
+
+    def __add__(self, other):
+        return super(timedelta, self).__add__(other)
+
+    def __div__(self, other):
+        # Ensure other is float
+        other = float(other)
+        return timedelta( days = self.days / other, seconds = self.seconds / other,
+                microseconds = self.microseconds / other )
 

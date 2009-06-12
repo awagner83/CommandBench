@@ -24,7 +24,7 @@ from subprocess import Popen
 from os import tmpfile
 from pprint import pprint
 from multiprocessing import Pool
-from commandbench.time import parsetime
+from commandbench.time import timedelta
 from commandbench.cli import init_display, output_results
 
 class Controller:
@@ -66,7 +66,7 @@ class Controller:
 
                 try: stats[type][0]
                 except: stats[type] = []
-                stats[type].append(parsetime(time))
+                stats[type].append(timedelta.from_string(time))
 
         # Output results
         output_results(stats)
