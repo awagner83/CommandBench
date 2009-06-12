@@ -18,7 +18,10 @@
 
 from commandbench.about import copyright_line
 
-def init_display(controller):
+def init_display(controller, display_options):
+
+    # Check for quite flag
+    if display_options['quiet']: return None
 
     # Build app intro
     intro = "Benchmarking '\x1b[1m{cmd}\x1b[0m' {rep} times (concurrency {concurrency})"
@@ -30,7 +33,7 @@ def init_display(controller):
     print "Please be patient...", "\n"
     
 
-def output_results(stats):
+def output_results(stats, display_options):
 
     # Output results
     for type, times in stats.iteritems():

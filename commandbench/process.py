@@ -41,10 +41,15 @@ class Controller:
     # Concurrency level
     concurrency = 1
 
-    def __init__(self, command, repetitions=1, concurrency=1):
+    # Display options
+    display_options = {}
+
+    def __init__(self, command, repetitions=1, concurrency=1, 
+            display_options={}):
         self.command = command
         self.repetitions = repetitions if repetitions else 1
         self.concurrency = concurrency if concurrency else 1
+        self.display_options = display_options
 
     def run(self):
         # Init stat storage
@@ -54,7 +59,7 @@ class Controller:
         pool = Pool(self.concurrency)
 
         # Output initial greeting/please wait message
-        init_display(self)
+        init_display(self, self.display_options)
 
         # Run benchmark
         for result in pool.map(run_command, \
@@ -69,7 +74,7 @@ class Controller:
                 stats[type].append(timedelta.from_string(time))
 
         # Output results
-        output_results(stats)
+        output_results(stats, self.display_options)
 
 
 def run_command(command):

@@ -28,16 +28,18 @@ if __name__ == '__main__':
     
     # Parse command-line opts
     parser = OptionParser( 'Usage: %prog [options] COMMAND' )
-    parser.add_option('-n', '--number', dest='repetitions', type="int",
+    parser.add_option('-n', '--number', dest='repetitions', type='int',
             help='number of times to repeat COMMAND (default: 1)', default=1)
-    parser.add_option('-c', '--concurrency', dest='concurrency', type='int',
-            help='maximum number of processes to run simultaneously (default: 1)',
-            default=1)
+    parser.add_option('-c', '--concurrency', type='int', default=1,
+            help='maximum number of processes to run simultaneously (default: 1)')
+    parser.add_option('-q', '--quiet', action='store_true', 
+            help='Suppress intro and only output final benchmark data')
     options, command = parser.parse_args()
 
     if len( command ):
         # Create controller and execute
-        Controller(command, options.repetitions, options.concurrency).run()
+        Controller(command, options.repetitions, options.concurrency,
+                vars(options)).run()
     else:
         from commandbench.about import copyright_line
         print copyright_line, "\n"
