@@ -1,5 +1,5 @@
 #------------------------------------------------------------------------#
-# CommandBench - All-purpose command-line application benchmarking tool
+# CommandBench - All-purpose application benchmarking tool
 # Copyright (C) 2009 Adam Wagner <awagner83@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -26,6 +26,7 @@ from pprint import pprint
 from multiprocessing import Pool
 from commandbench.time import timedelta
 from commandbench.cli import init_display, output_results
+from collections import defaultdict
 
 class Controller:
     """
@@ -53,7 +54,7 @@ class Controller:
 
     def run(self):
         # Init stat storage
-        stats = {}
+        stats = defaultdict(list)
 
         # Init multi-proc pool & base worker
         pool = Pool(self.concurrency)
@@ -84,8 +85,6 @@ class Controller:
                 try: type, time = statLine.split("\t")
                 except: continue
 
-                try: stats[type][0]
-                except: stats[type] = []
                 stats[type].append(timedelta.from_string(time))
 
         # Output results

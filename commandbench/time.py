@@ -1,5 +1,5 @@
 #------------------------------------------------------------------------#
-# CommandBench - All-purpose command-line application benchmarking tool
+# CommandBench - All-purpose application benchmarking tool
 # Copyright (C) 2009 Adam Wagner <awagner83@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify

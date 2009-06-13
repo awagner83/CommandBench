@@ -1,5 +1,5 @@
 #------------------------------------------------------------------------#
-# CommandBench - All-purpose command-line application benchmarking tool
+# CommandBench - All-purpose application benchmarking tool
 # Copyright (C) 2009 Adam Wagner <awagner83@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -21,7 +21,7 @@ Application MetaData
 """
 
 name = 'CommandBench'
-description = 'All-purpose command-line application benchmarking tool'
+description = 'All-purpose application benchmarking tool'
 website = 'http://github.com/awagner83/CommandBench/'
 author = 'Adam Wagner'
 email = 'awagner83@gmail.com'
