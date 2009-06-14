@@ -24,14 +24,18 @@ CLI interface to CommandBench
 if __name__ == '__main__':
     
     from commandbench.process import Controller
+    from commandbench import about
     from optparse import OptionParser
     
     # Parse command-line opts
-    parser = OptionParser( 'Usage: %prog [options] COMMAND' )
+    parser = OptionParser( 'Usage: %prog [options] COMMAND', 
+            version=about.name + ' ' + about.version )
     parser.add_option('-n', '--number', dest='repetitions', type='int',
             help='number of times to repeat COMMAND (default: 1)', default=1)
     parser.add_option('-c', '--concurrency', type='int', default=1,
             help='maximum number of processes to run simultaneously (default: 1)')
+    parser.add_option('-s', '--show', default='',
+            help='Stats to output (eg: real,sys)')
     parser.add_option('-q', '--quiet', action='store_true', 
             help='Suppress intro and only output final benchmark data')
     options, command = parser.parse_args()

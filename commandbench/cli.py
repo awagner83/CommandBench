@@ -37,14 +37,18 @@ def init_display(controller, display_options):
 
 def output_results(stats, display_options):
 
+    # What benchmarks should we report
+    show = [benchmark.strip() for benchmark in display_options['show'].split(',')]
+
     headerFormat = ' '*10+(''.join(['{'+str(i)+':<'+COLUMN_WIDTH+'}' for i in range(4)]))
     rowFormat = '{0:<10}'+(''.join(['{'+str(i)+':<'+COLUMN_WIDTH+'}' for i in range(1,5)]))
     
     # Output table header
     print headerFormat.format( *('avg','total','min','max') )
-
+    
     # Output results
     for type, times in stats.iteritems():
+        if show[0] != '' and type not in show: continue
         sum = reduce(lambda x, y: x+y, times)
         avg = sum / len(times)
         print rowFormat.format( *(type, avg, sum, min(times), max(times)) )
