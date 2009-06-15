@@ -30,7 +30,7 @@ def init_display(controller, display_options):
 
     # Print intro
     print copyright_line, "\n"
-    print intro.format( cmd=' '.join(controller.command), rep=controller.repetitions,\
+    print intro.format( cmd=', '.join(controller.commands), rep=controller.repetitions,\
             concurrency=controller.concurrency )
     print "Please be patient...", "\n"
     

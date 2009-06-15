@@ -34,7 +34,7 @@ class Controller:
     """
 
     # Command to be benchmarked
-    command = None
+    commands = None
 
     # Number of times to run benchmark
     repetitions = 1
@@ -45,26 +45,44 @@ class Controller:
     # Display options
     display_options = {}
 
-    def __init__(self, command, repetitions=1, concurrency=1, 
+    def __init__(self, commands, repetitions=1, concurrency=1, 
             display_options={}):
-        self.command = command
+        self.commands = commands
         self.repetitions = repetitions if repetitions else 1
         self.concurrency = concurrency if concurrency else 1
         self.display_options = display_options
 
     def run(self):
-        # Init stat storage
-        stats = defaultdict(list)
-
-        # Init multi-proc pool & base worker
-        pool = Pool(self.concurrency)
-
         # Output initial greeting/please wait message
         init_display(self, self.display_options)
 
         # Run benchmark
+        results = []
+        for command in self.commands:
+            results.append( self.run_command( command ) )
+
+        # Parse results
+        for resultset in results:
+            # Init stat storage
+            stats = defaultdict(list)
+
+            for result in resultset:
+                # Read captured stats
+                for statLine in result.splitlines():
+                    try: type, time = statLine.split("\t")
+                    except: continue
+
+                    stats[type].append(timedelta.from_string(time))
+
+            # Output results
+            output_results(stats, self.display_options)
+
+
+    def run_command(self, command):
+        # Init multi-proc pool & base worker
+        pool = Pool(self.concurrency)
         result = pool.map_async(run_command, \
-                [self.command for x in range(self.repetitions)])
+                [command for x in range(self.repetitions)])
 
         # Wait for results
         try:
@@ -78,17 +96,7 @@ class Controller:
             pool.close()
             exit(1)
 
-        # Parse results
-        for result in results:
-            # Read captured stats
-            for statLine in result.splitlines():
-                try: type, time = statLine.split("\t")
-                except: continue
-
-                stats[type].append(timedelta.from_string(time))
-
-        # Output results
-        output_results(stats, self.display_options)
+        return results
 
 
 def run_command(command):
@@ -97,7 +105,7 @@ def run_command(command):
         with tmpfile() as outputBuffer:
             with tmpfile() as statsBuffer:
                 # Run given command
-                Popen( 'time ' + ' '.join(command), 
+                Popen( 'time ' + command, 
                         shell=True, stdout=outputBuffer, stderr=statsBuffer ).wait()
 
                 # Read captured stats
