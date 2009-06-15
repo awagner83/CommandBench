@@ -21,14 +21,14 @@
 CLI interface to CommandBench
 """
 
-if __name__ == '__main__':
+def main():
     
     from commandbench.process import Controller
     from commandbench import about
     from optparse import OptionParser
     
     # Parse command-line opts
-    parser = OptionParser( 'Usage: %prog [options] COMMAND', 
+    parser = OptionParser( 'Usage: %prog [options] "COMMAND"', 
             version=about.name + ' ' + about.version )
     parser.add_option('-n', '--number', dest='repetitions', type='int',
             help='number of times to repeat COMMAND (default: 1)', default=1)
@@ -48,4 +48,7 @@ if __name__ == '__main__':
         from commandbench.about import copyright_line
         print copyright_line, "\n"
         parser.print_help()
+
+
+if __name__ == '__main__': main()
 
