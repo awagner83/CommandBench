@@ -62,7 +62,7 @@ class Controller:
             results.append( self.run_command( command ) )
 
         # Parse results
-        for resultset in results:
+        for index, resultset in enumerate(results):
             # Init stat storage
             stats = defaultdict(list)
 
@@ -75,7 +75,7 @@ class Controller:
                     stats[type].append(timedelta.from_string(time))
 
             # Output results
-            output_results(stats, self.display_options)
+            output_results(self.commands[index], stats, self.display_options)
 
 
     def run_command(self, command):

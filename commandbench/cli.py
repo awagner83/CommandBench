@@ -26,30 +26,37 @@ def init_display(controller, display_options):
     if display_options['quiet']: return None
 
     # Build app intro
-    intro = "Benchmarking '\x1b[1m{cmd}\x1b[0m' {rep} times (concurrency {concurrency})"
+    intro = "Benchmarking command(s) {rep} times (concurrency {concurrency})"
 
     # Print intro
     print copyright_line, "\n"
-    print intro.format( cmd=', '.join(controller.commands), rep=controller.repetitions,\
+    print intro.format( cmd=' and '.join([bold(c) for c in controller.commands]), \
+            rep=controller.repetitions,\
             concurrency=controller.concurrency )
-    print "Please be patient...", "\n"
+    print "Please be patient..."
     
 
-def output_results(stats, display_options):
+def output_results(command, stats, display_options):
 
     # What benchmarks should we report
     show = [benchmark.strip() for benchmark in display_options['show'].split(',')]
 
     headerFormat = ' '*10+(''.join(['{'+str(i)+':<'+COLUMN_WIDTH+'}' for i in range(4)]))
     rowFormat = '{0:<10}'+(''.join(['{'+str(i)+':<'+COLUMN_WIDTH+'}' for i in range(1,5)]))
-    
+   
+    print "\n", "results for", bold(command)
+
     # Output table header
-    print headerFormat.format( *('avg','total','min','max') )
+    print headerFormat.format(*('AVG','TOTAL','MIN','MAX'))
     
     # Output results
     for type, times in stats.iteritems():
         if show[0] != '' and type not in show: continue
         sum = reduce(lambda x, y: x+y, times)
         avg = sum / len(times)
-        print rowFormat.format( *(type, avg, sum, min(times), max(times)) )
+        print rowFormat.format( *(bold(type.ljust(int(COLUMN_WIDTH))), \
+                avg, sum, min(times), max(times)) )
+
+def bold(string):
+    return '\x1b[1m' + string + '\x1b[0m'
 
