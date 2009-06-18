@@ -17,6 +17,7 @@
 #------------------------------------------------------------------------#
 
 from commandbench.about import copyright_line
+from functools import partial
 
 COLUMN_WIDTH = '10'
 
@@ -30,7 +31,7 @@ def init_display(controller, display_options):
 
     # Print intro
     print copyright_line, "\n"
-    print intro.format( cmd=' and '.join([bold(c) for c in controller.commands]), \
+    print intro.format( cmd=' and '.join([str(bold(c)) for c in controller.commands]), \
             rep=controller.repetitions,\
             concurrency=controller.concurrency )
     print "Please be patient..."
@@ -41,43 +42,57 @@ def output_results(command, stats, display_options):
     # What benchmarks should we report
     show = [benchmark.strip() for benchmark in display_options['show'].split(',')]
 
-    headerFormat = ' '*10+(''.join(['{'+str(i)+':<'+COLUMN_WIDTH+'}' for i in range(4)]))
-    rowFormat = '{0:<10}'+(''.join(['{'+str(i)+':<'+COLUMN_WIDTH+'}' for i in range(1,5)]))
-   
     print "\n", "results for", bold(command)
 
-    # Output table header
-    print headerFormat.format(*('AVG','TOTAL','MIN','MAX'))
-    
     # Output results
-    for type, times in stats.iteritems():
-        if show[0] != '' and type not in show: continue
-        sum = reduce(lambda x, y: x+y, times)
-        avg = sum / len(times)
-        print rowFormat.format( *(bold(type.ljust(int(COLUMN_WIDTH))), \
-                avg, sum, min(times), max(times)) )
+    sum = partial(reduce, lambda x, y: x+y)
+    values = [(bold(k), sum(v), sum(v)/len(v), min(v), max(v)) for k, v in stats.iteritems()]
+    print Table(values,('','AVG','TOTAL','MIN','MAX')).render()
 
-def bold(string):
-    return '\x1b[1m' + string + '\x1b[0m'
+        
+class FormattedString(object):
+
+    formatting = None
+    value = None
+
+    def __init__(self, formatting, value):
+        self.formatting = formatting
+        self.value = value
+
+    def __str__(self):
+        return ''.join([self.formatting[0],self.value,self.formatting[1]])
+
+    def __getattr__(self, name):
+        m = self.value.__getattribute__(name)
+
+        if name in ('capitalize','center','ljust','rjust', 'lower', 
+                'lstrip','rstrip','strip','upper'):
+            return lambda *args, **kargs: FormattedString(self.formatting, 
+                    m(*args,**kargs))
+        else:
+            return lambda *args, **kargs: m(*args,**kargs)
+        
+bold = partial(FormattedString, ['\x1b[1m', '\x1b[0m'])
 
 class Table(object):
     
     data = None
     columns = []
     column_width = 10
-    border = '| '
+    border = ''
 
-    def __init__(self,data,columns,column_width=10,border='| '):
+    def __init__(self,data,columns,column_width=10,border=''):
         self.data = data
         self.columns = columns
         self.column_width = column_width
-        self.delim = delim
+        self.border = border
 
     def render(self):
-        header = [bold(self.row(self.columns))] 
+        header = [str(bold(self.row(self.columns)))] 
         return '\n'.join(header + [self.row(r) for r in self.data])
 
     def row(self, data):
         return self.border.join(
-                [str(c).ljust(self.column_width) for c in data])
+                [str(c.ljust(self.column_width)) for c in 
+                    [c if hasattr(c,'ljust') else str(c) for c in data]])
 
