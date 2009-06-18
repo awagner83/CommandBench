@@ -60,3 +60,24 @@ def output_results(command, stats, display_options):
 def bold(string):
     return '\x1b[1m' + string + '\x1b[0m'
 
+class Table(object):
+    
+    data = None
+    columns = []
+    column_width = 10
+    border = '| '
+
+    def __init__(self,data,columns,column_width=10,border='| '):
+        self.data = data
+        self.columns = columns
+        self.column_width = column_width
+        self.delim = delim
+
+    def render(self):
+        header = [bold(self.row(self.columns))] 
+        return '\n'.join(header + [self.row(r) for r in self.data])
+
+    def row(self, data):
+        return self.border.join(
+                [str(c).ljust(self.column_width) for c in data])
+
