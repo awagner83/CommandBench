@@ -61,17 +61,20 @@ class FormattedString(object):
 
     def __str__(self):
         return ''.join([self.formatting[0],self.value,self.formatting[1]])
-
+    
     def __getattr__(self, name):
         m = self.value.__getattribute__(name)
-
-        if name in ('capitalize','center','ljust','rjust', 'lower', 
-                'lstrip','rstrip','strip','upper'):
-            return lambda *args, **kargs: FormattedString(self.formatting, 
-                    m(*args,**kargs))
-        else:
-            return lambda *args, **kargs: m(*args,**kargs)
         
+        def string_method(method, formatting, *args, **kargs):
+            result = method(*args,**kargs)
+            if type(result) == str:
+                return FormattedString(formatting,result)
+            else:
+                return result
+
+        return partial( string_method, m, self.formatting )
+
+
 bold = partial(FormattedString, ['\x1b[1m', '\x1b[0m'])
 
 class Table(object):
@@ -81,7 +84,7 @@ class Table(object):
     column_width = 10
     border = ''
 
-    def __init__(self,data,columns,column_width=10,border=''):
+    def __init__(self,data,columns=[],column_width=10,border=''):
         self.data = data
         self.columns = columns
         self.column_width = column_width
