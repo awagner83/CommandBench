@@ -16,40 +16,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #------------------------------------------------------------------------#
 
-from commandbench.about import copyright_line
 from functools import partial
 
-COLUMN_WIDTH = '10'
-
-def init_display(controller, display_options):
-
-    # Check for quite flag
-    if display_options['quiet']: return None
-
-    # Build app intro
-    intro = "Benchmarking command(s) {rep} times (concurrency {concurrency})"
-
-    # Print intro
-    print copyright_line, "\n"
-    print intro.format( cmd=' and '.join([str(bold(c)) for c in controller.commands]), \
-            rep=controller.repetitions,\
-            concurrency=controller.concurrency )
-    print "Please be patient..."
-    
-
-def output_results(command, stats, display_options):
-
-    # What benchmarks should we report
-    show = [benchmark.strip() for benchmark in display_options['show'].split(',')]
-
-    print "\n", "results for", bold(command)
-
-    # Output results
-    sum = partial(reduce, lambda x, y: x+y)
-    values = [(bold(k), sum(v), sum(v)/len(v), min(v), max(v)) for k, v in stats.iteritems()]
-    print Table(values,('','AVG','TOTAL','MIN','MAX')).render()
-
-        
 class FormattedString(object):
     """
     ANSI Escape Sequence "Formatted String Factory"

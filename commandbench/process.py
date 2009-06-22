@@ -25,7 +25,7 @@ from os import tmpfile
 from pprint import pprint
 from multiprocessing import Pool
 from commandbench.time import timedelta
-from commandbench.cli import init_display, output_results
+from commandbench.cli.interface import init_display, output_results
 from collections import defaultdict
 
 class Controller:
