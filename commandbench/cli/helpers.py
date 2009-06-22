@@ -17,6 +17,9 @@
 #------------------------------------------------------------------------#
 
 from functools import partial
+from sys import stdout
+
+ISATTY = stdout.isatty()
 
 class FormattedString(object):
     """
@@ -31,7 +34,9 @@ class FormattedString(object):
         self.value = value
 
     def __str__(self):
-        return ''.join([self.formatting[0],self.value,self.formatting[1]])
+        if ISATTY:
+            return ''.join([self.formatting[0],self.value,self.formatting[1]])
+        else: return self.value
     
     def __getattr__(self, name):
         m = self.value.__getattribute__(name)
