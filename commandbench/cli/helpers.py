@@ -31,7 +31,7 @@ class FormattedString(object):
 
     def __init__(self, formatting, value):
         self.formatting = formatting
-        self.value = value
+        self.value = str(value)
 
     def __str__(self):
         if ISATTY:
@@ -50,6 +50,8 @@ class FormattedString(object):
 
 
 bold = partial(FormattedString, ['\x1b[1m', '\x1b[0m'])
+green = partial(FormattedString, ['\x1b[32m', '\x1b[0m'])
+red = partial(FormattedString, ['\x1b[31m', '\x1b[0m'])
 
 class Table(object):
     """

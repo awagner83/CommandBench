@@ -17,8 +17,10 @@
 #------------------------------------------------------------------------#
 
 from commandbench.about import copyright_line
-from commandbench.cli.helpers import Table, bold
+from commandbench.cli.helpers import Table, bold, red, green
+from commandbench.time import BEST, WORST
 from functools import partial
+from itertools import chain
 
 COLUMN_WIDTH = '10'
 
@@ -32,7 +34,8 @@ def init_display(controller, display_options):
 
     # Print intro
     print copyright_line, "\n"
-    print intro.format( cmd=' and '.join([str(bold(c)) for c in controller.commands]), \
+    print intro.format( cmd=' and '.join([str(bold(c)) 
+        for c in controller.commands]), \
             rep=controller.repetitions,\
             concurrency=controller.concurrency )
     print "Please be patient..."
@@ -41,12 +44,10 @@ def init_display(controller, display_options):
 def output_results(command, stats, display_options):
 
     # What benchmarks should we report
-    show = [benchmark.strip() for benchmark in display_options['show'].split(',')]
+    show = [x.strip() for x in display_options['show'].split(',')]
 
     print "\n", "results for", bold(command)
 
     # Output results
-    sum = partial(reduce, lambda x, y: x+y)
-    values = [(bold(k), sum(v), sum(v)/len(v), min(v), max(v)) for k, v in stats.iteritems()]
-    print Table(values,('','AVG','TOTAL','MIN','MAX')).render()
+    print Table(stats,('','AVG','TOTAL','MIN','MAX')).render()
 

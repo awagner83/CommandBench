@@ -24,9 +24,11 @@ from subprocess import Popen
 from os import tmpfile
 from pprint import pprint
 from multiprocessing import Pool
-from commandbench.time import timedelta
+from commandbench.time import timedelta, BEST, WORST
 from commandbench.cli.interface import init_display, output_results
 from collections import defaultdict
+from functools import partial
+from itertools import chain
 
 class Controller:
     """
@@ -62,6 +64,8 @@ class Controller:
             results.append( self.run_command( command ) )
 
         # Parse results
+        all_stats = []
+        sum = partial(reduce, lambda x, y: x+y)
         for index, resultset in enumerate(results):
             # Init stat storage
             stats = defaultdict(list)
@@ -73,8 +77,24 @@ class Controller:
                     except: continue
 
                     stats[type].append(timedelta.from_string(time))
+           
+            # build dict of values
+            values = [(k, sum(v), sum(v)/len(v), min(v), max(v))
+                    for k, v in stats.iteritems()]
 
-            # Output results
+            # append to list of all stats
+            all_stats.append(values)
+
+        # Mark max/min values
+        print [x for x in chain(*all_stats)]
+
+        exit()
+        for values in chain(*[x[1:] for x in all_stats]): 
+            min(values).score = BEST
+            max(values).score = WORST
+
+        # Output results
+        for stats in all_stats: 
             output_results(self.commands[index], stats, self.display_options)
 
 
