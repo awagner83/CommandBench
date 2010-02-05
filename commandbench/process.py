@@ -16,55 +16,67 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #------------------------------------------------------------------------#
 
-"""
-Application Process Classes
-"""
+"""Application Process Classes"""
 
 from subprocess import Popen
 from os import tmpfile
-from pprint import pprint
 from multiprocessing import Pool
+from itertools import repeat
+
 from commandbench.time import timedelta
-from commandbench.cli import init_display, output_results
-from collections import defaultdict
+from commandbench.cli.interface import init_display, output_results
+
 
 class Controller:
-    """
-    Main process controlling all other process going-ons
-    """
+    """Main process controlling all other process going-ons"""
 
-    # Command to be benchmarked
-    command = None
-
-    # Number of times to run benchmark
-    repetitions = 1
-
-    # Concurrency level
-    concurrency = 1
-
-    # Display options
-    display_options = {}
-
-    def __init__(self, command, repetitions=1, concurrency=1, 
-            display_options={}):
-        self.command = command
-        self.repetitions = repetitions if repetitions else 1
-        self.concurrency = concurrency if concurrency else 1
-        self.display_options = display_options
+    def __init__(self, commands, repetitions=1, concurrency=1, 
+            display_options=None):
+        self.commands = commands
+        self.repetitions = repetitions or 1
+        self.concurrency = concurrency or 1
+        self.display_options = display_options or {}
 
     def run(self):
-        # Init stat storage
-        stats = defaultdict(list)
-
-        # Init multi-proc pool & base worker
-        pool = Pool(self.concurrency)
-
+        """Benchmark process main loop."""
         # Output initial greeting/please wait message
         init_display(self, self.display_options)
 
         # Run benchmark
-        result = pool.map_async(run_command, \
-                [self.command for x in range(self.repetitions)])
+        results = []
+        for command in self.commands:
+            results.append( self.run_command( command ) )
+
+        # Parse results
+        labels = []
+        stats = []
+        for index, resultset in enumerate(results):
+            for result in resultset:
+                # Read captured stats
+                single_labels = ['command']
+                single_stats = [self.commands[index]]
+                for stat_line in result.splitlines():
+                    try: 
+                        stat_type, time = stat_line.split("\t")
+                    except ValueError: 
+                        continue
+                    single_labels.append(stat_type)
+                    single_stats.append(timedelta.from_string(time))
+
+                stats.append(single_stats)
+           
+                # build dict of values
+                if not labels:
+                    labels = single_labels
+
+        output_results(stats, labels, self.display_options) 
+
+
+    def run_command(self, command):
+        """Run given command with configured reps and concurrency."""
+        # Init multi-proc pool & base worker
+        pool = Pool(self.concurrency)
+        result = pool.map_async(run_command, repeat(command, self.repetitions))
 
         # Wait for results
         try:
@@ -78,31 +90,22 @@ class Controller:
             pool.close()
             exit(1)
 
-        # Parse results
-        for result in results:
-            # Read captured stats
-            for statLine in result.splitlines():
-                try: type, time = statLine.split("\t")
-                except: continue
-
-                stats[type].append(timedelta.from_string(time))
-
-        # Output results
-        output_results(stats, self.display_options)
+        return results
 
 
 def run_command(command):
-    # Create buffer to collect stats per run
+    """Create buffer to collect stats for given command."""
     try:
-        with tmpfile() as outputBuffer:
-            with tmpfile() as statsBuffer:
+        with tmpfile() as output_buffer:
+            with tmpfile() as stats_buffer:
                 # Run given command
-                Popen( 'time ' + ' '.join(command), 
-                        shell=True, stdout=outputBuffer, stderr=statsBuffer ).wait()
+                Popen('time ' + command, 
+                        shell=True, stdout=output_buffer, 
+                        stderr=stats_buffer).wait()
 
                 # Read captured stats
-                statsBuffer.seek(0)
-                result = statsBuffer.read()
+                stats_buffer.seek(0)
+                result = stats_buffer.read()
 
         # Return our findings
         return result

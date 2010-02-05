@@ -20,12 +20,22 @@
 Time handling utilities
 """
 
+from commandbench.cli.helpers import red, green
 from datetime import timedelta
+from sys import stdout
 import re
+
+ISATTY = stdout.isatty()
+
+BEST = 1
+WORST = 2
 
 class ParseTimeError: pass
 
 class timedelta(timedelta):
+
+    # Possible values: BEST / WORST / None
+    score = None
 
     @classmethod
     def from_string(cls, timestring):
@@ -40,7 +50,14 @@ class timedelta(timedelta):
                 seconds=float(match.group('seconds')) )
 
     def __str__(self):
-        return str((self.days * 60*60*24) + self.seconds + self.microseconds / 1000000.0)
+        string = str((self.days * 60*60*24) 
+                + self.seconds + self.microseconds / 1000000.0)
+        if ISATTY: 
+            if self.score == BEST: return str(green(string))
+            elif self.score == WORST: return str(red(string))
+            else: return string
+        else:
+            return string
 
     def __add__(self, other):
         return timedelta( days = self.days + other.days, 

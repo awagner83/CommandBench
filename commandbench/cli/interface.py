@@ -16,40 +16,45 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #------------------------------------------------------------------------#
 
-from commandbench.about import copyright_line
+"""CLI Output Methods."""
 
-COLUMN_WIDTH = '10'
+from commandbench.about import copyright_line
+from commandbench.cli.helpers import bold
+from functools import partial
+
+from datagrid.core import DataGrid
+from datagrid.renderer import ascii
+
 
 def init_display(controller, display_options):
+    """Welcome/Startup output."""
 
     # Check for quite flag
-    if display_options['quiet']: return None
+    if display_options['quiet']: 
+        return None
 
     # Build app intro
-    intro = "Benchmarking '\x1b[1m{cmd}\x1b[0m' {rep} times (concurrency {concurrency})"
+    intro = "Benchmarking command(s) {rep} times (concurrency {concurrency})"
 
     # Print intro
     print copyright_line, "\n"
-    print intro.format( cmd=' '.join(controller.command), rep=controller.repetitions,\
+    print intro.format( cmd=' and '.join([str(bold(c)) 
+        for c in controller.commands]), \
+            rep=controller.repetitions,\
             concurrency=controller.concurrency )
-    print "Please be patient...", "\n"
+    print "Please be patient..."
     
 
-def output_results(stats, display_options):
+def output_results(stats, labels, display_options):
+    """Output results table."""
 
-    # What benchmarks should we report
-    show = [benchmark.strip() for benchmark in display_options['show'].split(',')]
+    # Aggregate Methods
+    time_sum = partial(reduce, lambda x, y: x+y)
+    average = lambda vals: time_sum(vals) / len(vals)
 
-    headerFormat = ' '*10+(''.join(['{'+str(i)+':<'+COLUMN_WIDTH+'}' for i in range(4)]))
-    rowFormat = '{0:<10}'+(''.join(['{'+str(i)+':<'+COLUMN_WIDTH+'}' for i in range(1,5)]))
-    
-    # Output table header
-    print headerFormat.format( *('avg','total','min','max') )
-    
-    # Output results
-    for type, times in stats.iteritems():
-        if show[0] != '' and type not in show: continue
-        sum = reduce(lambda x, y: x+y, times)
-        avg = sum / len(times)
-        print rowFormat.format( *(type, avg, sum, min(times), max(times)) )
+    # Setup DataGrid
+    grid = DataGrid(stats, labels, 
+        aggregate={"real": average, "user": average, "sys": average},
+        groupby=['command'], suppressdetail=True)
+    print "\n", grid.render(ascii.Renderer())
 

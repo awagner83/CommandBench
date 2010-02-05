@@ -28,7 +28,7 @@ def main():
     from optparse import OptionParser
     
     # Parse command-line opts
-    parser = OptionParser( 'Usage: %prog [options] "COMMAND"', 
+    parser = OptionParser( 'Usage: %prog [options] "COMMAND" ["COMMAND_2"] .. ["COMMAND_N"]', 
             version=about.name + ' ' + about.version )
     parser.add_option('-n', '--number', dest='repetitions', type='int',
             help='number of times to repeat COMMAND (default: 1)', default=1)
@@ -38,11 +38,11 @@ def main():
             help='Stats to output (eg: real,sys)')
     parser.add_option('-q', '--quiet', action='store_true', 
             help='Suppress intro and only output final benchmark data')
-    options, command = parser.parse_args()
+    options, commands = parser.parse_args()
 
-    if len( command ):
+    if len( commands ):
         # Create controller and execute
-        Controller(command, options.repetitions, options.concurrency,
+        Controller(commands, options.repetitions, options.concurrency,
                 vars(options)).run()
     else:
         from commandbench.about import copyright_line
