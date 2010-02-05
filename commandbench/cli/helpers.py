@@ -22,9 +22,7 @@ from sys import stdout
 ISATTY = stdout.isatty()
 
 class FormattedString(object):
-    """
-    ANSI Escape Sequence "Formatted String Factory"
-    """
+    """ANSI Escape Sequence "Formatted String Factory"."""
 
     formatting = None
     value = None
@@ -52,35 +50,4 @@ class FormattedString(object):
 bold = partial(FormattedString, ['\x1b[1m', '\x1b[0m'])
 green = partial(FormattedString, ['\x1b[32m', '\x1b[0m'])
 red = partial(FormattedString, ['\x1b[31m', '\x1b[0m'])
-
-class Table(object):
-    """
-    Fixed-width ascii table
-    """
-    
-    data = None
-    columns = []
-    column_width = 10
-    border = ''
-
-    def __init__(self,data,columns=[],column_width=10,border=''):
-        self.data = data
-        self.columns = columns
-        self.column_width = column_width
-        self.border = border
-
-    def render(self):
-        """
-        Generate table from given init data and return
-        """
-        header = [str(bold(self.row(self.columns)))] 
-        return '\n'.join(header + [self.row(r) for r in self.data])
-
-    def row(self, data):
-        """
-        Generate row to be injected in final rendered table
-        """
-        return self.border.join(
-                [str(c.ljust(self.column_width)) for c in 
-                    [c if hasattr(c,'ljust') else str(c) for c in data]])
 

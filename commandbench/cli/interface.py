@@ -16,18 +16,22 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #------------------------------------------------------------------------#
 
-from commandbench.about import copyright_line
-from commandbench.cli.helpers import Table, bold, red, green
-from commandbench.time import BEST, WORST
-from functools import partial
-from itertools import chain
+"""CLI Output Methods."""
 
-COLUMN_WIDTH = '10'
+from commandbench.about import copyright_line
+from commandbench.cli.helpers import bold
+from functools import partial
+
+from datagrid.core import DataGrid
+from datagrid.renderer import ascii
+
 
 def init_display(controller, display_options):
+    """Welcome/Startup output."""
 
     # Check for quite flag
-    if display_options['quiet']: return None
+    if display_options['quiet']: 
+        return None
 
     # Build app intro
     intro = "Benchmarking command(s) {rep} times (concurrency {concurrency})"
@@ -41,13 +45,16 @@ def init_display(controller, display_options):
     print "Please be patient..."
     
 
-def output_results(command, stats, display_options):
+def output_results(stats, labels, display_options):
+    """Output results table."""
 
-    # What benchmarks should we report
-    show = [x.strip() for x in display_options['show'].split(',')]
+    # Aggregate Methods
+    time_sum = partial(reduce, lambda x, y: x+y)
+    average = lambda vals: time_sum(vals) / len(vals)
 
-    print "\n", "results for", bold(command)
-
-    # Output results
-    print Table(stats,('','AVG','TOTAL','MIN','MAX')).render()
+    # Setup DataGrid
+    grid = DataGrid(stats, labels, 
+        aggregate={"real": average, "user": average, "sys": average},
+        groupby=['command'], suppressdetail=True)
+    print "\n", grid.render(ascii.Renderer())
 
