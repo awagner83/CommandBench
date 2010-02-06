@@ -16,7 +16,7 @@ Example:
         "find . | grep pyc"
 
     This is CommandBench v0.3b, http://github.com/awagner83/CommandBench/
-    Copyright (C) 2009 Adam Wagner <awagner83@gmail.com>
+    Copyright (C) 2009-2010 Adam Wagner <awagner83@gmail.com>
 
     Benchmarking command(s) 50 times (concurrency 1)
     Please be patient...
@@ -46,4 +46,4 @@ For a system-wide installation run (as root):
 
 CommandBench is licensed under the GNU/GPLv3 (see COPYING for details).
 
-Copyright (C) 2009 Adam Wagner <awagner83@gmail.com>
+Copyright (C) 2009-2010 Adam Wagner <awagner83@gmail.com>
