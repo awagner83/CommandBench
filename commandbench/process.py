@@ -45,10 +45,19 @@ class Controller:
 
         # Run benchmark
         results = []
-        for command in self.commands:
-            if not self.display_options['quiet']:
-                print 'benching "%s"...' % command
-            results.append(self.run_command(command))
+        try:
+            for command in self.commands:
+                if not self.display_options['quiet']:
+                    print 'benching "%s"...' % command
+                results.append(self.run_command(command))
+        except KeyboardInterrupt:
+            print "\nKeyboard Interrupt Caught... " \
+                    "%s benchmarks completed," % len(results),
+            if results:
+                print "rendering partial result."
+            else:
+                print "exiting."
+                exit(1)
 
         # Parse results
         labels = []
@@ -88,10 +97,8 @@ class Controller:
                 if result.ready(): 
                     results = result.get()
                     break
-        except KeyboardInterrupt:
-            print "\nKeyboard Interrupt Caught. Terminating benchmark..."
+        finally:
             pool.close()
-            exit(1)
 
         return results
 
