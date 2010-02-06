@@ -17,15 +17,18 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #------------------------------------------------------------------------#
 
-"""
-CLI interface to CommandBench
-"""
+"""CLI interface to CommandBench"""
+
+from glob import glob
+from itertools import chain
+from optparse import OptionParser
+
+from commandbench.process import Controller
+from commandbench import about
+
 
 def main():
-    
-    from commandbench.process import Controller
-    from commandbench import about
-    from optparse import OptionParser
+    """The make-it-happen method."""
     
     # Parse command-line opts
     parser = OptionParser('Usage: %prog [options] "COMMAND" '
@@ -42,18 +45,25 @@ def main():
             help='Run given command once for, and with, the given arg list.  '
                  'NOTE - only one command can be specified when using this '
                  'option.')
+    parser.add_option('-f', '--files',
+            help='Run given command once for each file given (similar to -a)')
     options, commands = parser.parse_args()
 
     if len(commands):
         # Check for 'xargs-style' mode
-        if options.args:
+        if options.args or options.files:
             if len(commands) > 1:
                 parser.error("only one command can be specified when using "
                         "the -a (--args) option")
 
-            args = options.args.split()
-            if not args:
-                parser.error("nothing was supplied to the --args option")
+            if options.args and options.files:
+                parser.error("only one of -f/-a can be used at once.")
+
+            if options.files:
+                args = list(chain(*(glob(file) 
+                        for file in options.files.split())))
+            else:
+                args = options.args.split()
 
             # build new command list
             commands = ["%s %s" % (commands[0], arg) for arg in args]
