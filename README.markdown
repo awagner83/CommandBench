@@ -22,7 +22,7 @@ Example:
     =====================================================================================
                                       0:00:00.564200   0:00:00.247250   0:00:00.325150  
 
-Benchmarks can also be run in a xargs-like manner:
+Benchmarks can also be run in an xargs-like manner:
 
     $ cb -q -a "`find . -name "*.py"`" ls   
 
@@ -39,6 +39,23 @@ Benchmarks can also be run in a xargs-like manner:
     ls ./setup.py                   0:00:00.003000   0:00:00.001000   0:00:00.001000   
     ===================================================================================
                                     0:00:00.003000   0:00:00.000833   0:00:00.001833   
+
+or use a file-pattern for your iteration arg:
+
+    $ cb -q -f "commandbench/*.py" ls
+
+    Benchmarking command(s) 1 times (concurrency 1)
+    Please be patient...
+
+    command                       real (avg)       user (avg)       sys (avg)        
+    =================================================================================
+    ls commandbench/__init__.py   0:00:00.003000   0:00:00          0:00:00.004000   
+    ls commandbench/about.py      0:00:00.003000   0:00:00          0:00:00.005000   
+    ls commandbench/cli.py        0:00:00.003000   0:00:00.001000   0:00:00.002000   
+    ls commandbench/process.py    0:00:00.003000   0:00:00.001000   0:00:00.001000   
+    ls commandbench/time.py       0:00:00.003000   0:00:00          0:00:00.003000   
+    =================================================================================
+                                  0:00:00.003000   0:00:00.000400   0:00:00.003000 
 
 
 Dependencies
