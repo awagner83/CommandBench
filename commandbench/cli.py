@@ -18,7 +18,7 @@
 
 """CLI Output Methods."""
 
-from commandbench.about import copyright_line
+from commandbench.about import COPYRIGHT_LINE
 from functools import partial
 
 from datagrid.core import DataGrid
@@ -29,7 +29,7 @@ def init_display(controller):
     """Welcome/Startup output."""
 
     # Print intro
-    print copyright_line, "\n"
+    print COPYRIGHT_LINE, "\n"
     print ("Benchmarking command(s) %s times (concurrency %s)" %
             (controller.repetitions, controller.concurrency))
     print "Please be patient..."

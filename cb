@@ -29,7 +29,7 @@ def main():
     
     # Parse command-line opts
     parser = OptionParser( 'Usage: %prog [options] "COMMAND" ["COMMAND_2"] .. ["COMMAND_N"]', 
-            version=about.name + ' ' + about.version )
+            version=about.NAME + ' ' + about.VERSION )
     parser.add_option('-n', '--number', dest='repetitions', type='int',
             help='number of times to repeat COMMAND (default: 1)', default=1)
     parser.add_option('-c', '--concurrency', type='int', default=1,
@@ -43,8 +43,7 @@ def main():
         Controller(commands, options.repetitions, options.concurrency,
                 vars(options)).run()
     else:
-        from commandbench.about import copyright_line
-        print copyright_line, "\n"
+        print about.COPYRIGHT_LINE, "\n"
         parser.print_help()
 
 

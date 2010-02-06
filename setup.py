@@ -20,13 +20,13 @@
 from distutils.core import setup
 from commandbench import about
 
-setup(  name = about.name,
-        version = about.version,
-        author = about.author,
-        author_email = about.email,
-        url = about.website,
-        description = about.description,
-        license = about.license,
+setup(  name = about.NAME,
+        version = about.VERSION,
+        author = about.AUTHOR,
+        author_email = about.EMAIL,
+        url = about.WEBSITE,
+        description = about.DESCRIPTION,
+        license = about.LICENSE,
         packages = ['commandbench', 'commandbench.cli'],
         data_files = [('bin', ['cb'])],
         classifiers = ['Programming Language :: Python',

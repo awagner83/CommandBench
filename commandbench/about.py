@@ -16,18 +16,17 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #------------------------------------------------------------------------#
 
-"""
-Application MetaData
-"""
+"""Application MetaData"""
 
-name = 'CommandBench'
-description = 'All-purpose application benchmarking tool'
-website = 'http://github.com/awagner83/CommandBench/'
-author = 'Adam Wagner'
-email = 'awagner83@gmail.com'
-version = '0.3b'
-copyright_year = '2009'
-license = 'GNU General Public License (GPL)'
+NAME = 'CommandBench'
+DESCRIPTION = 'All-purpose application benchmarking tool'
+WEBSITE = 'http://github.com/awagner83/CommandBench/'
+AUTHOR = 'Adam Wagner'
+EMAIL = 'awagner83@gmail.com'
+VERSION = '0.3b'
+COPYRIGHT_YEAR = '2009-2010'
+LICENSE = 'GNU General Public License (GPL)'
 
-copyright_line = ('This is {name} v{version}, {website}\n'\
-    + 'Copyright (C) {copyright_year} {author} <{email}>').format(**locals())
+COPYRIGHT_LINE = ('This is %s v%s, %s\nCopyright (C) %s %s <%s>' %
+    (NAME, VERSION, WEBSITE, COPYRIGHT_YEAR, AUTHOR, EMAIL))
+
