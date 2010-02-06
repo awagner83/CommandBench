@@ -16,57 +16,27 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #------------------------------------------------------------------------#
 
-"""
-Time handling utilities
-"""
+"""Time handling utilities"""
 
-from commandbench.cli.helpers import red, green
 from datetime import timedelta
-from sys import stdout
 import re
 
-ISATTY = stdout.isatty()
 
-BEST = 1
-WORST = 2
+class ParseTimeError(Exception): 
+    """Time could not be parsed from string given."""
+    pass
 
-class ParseTimeError: pass
 
-class timedelta(timedelta):
+def parsetimedelta(timestring):
+    """Return new timedelta instance from a string."""
+    # Compile and run regex
+    regex = re.compile(r'(?P<minutes>[0-9]+)m(?P<seconds>[0-9]+\.[0-9]+)s')
+    match = regex.match(timestring) 
+    
+    # Error out if no match was found
+    if match is None: 
+        raise ParseTimeError()
 
-    # Possible values: BEST / WORST / None
-    score = None
-
-    @classmethod
-    def from_string(cls, timestring):
-        # Compile and run regex
-        regex = re.compile(r'(?P<minutes>[0-9]+)m(?P<seconds>[0-9]+\.[0-9]+)s')
-        match = regex.match(timestring) 
-        
-        # Error out if no match was found
-        if match is None: raise ParseTimeError()
-
-        return cls( minutes=int(match.group('minutes')), 
-                seconds=float(match.group('seconds')) )
-
-    def __str__(self):
-        string = str((self.days * 60*60*24) 
-                + self.seconds + self.microseconds / 1000000.0)
-        if ISATTY: 
-            if self.score == BEST: return str(green(string))
-            elif self.score == WORST: return str(red(string))
-            else: return string
-        else:
-            return string
-
-    def __add__(self, other):
-        return timedelta( days = self.days + other.days, 
-                seconds = self.seconds + other.seconds,
-                microseconds = self.microseconds + other.microseconds )
-
-    def __div__(self, other):
-        # Ensure other is float
-        other = float(other)
-        return timedelta( days = self.days / other, seconds = self.seconds / other,
-                microseconds = self.microseconds / other )
+    return timedelta(minutes=int(match.group('minutes')), 
+            seconds=float(match.group('seconds')))
 

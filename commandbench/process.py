@@ -23,7 +23,7 @@ from os import tmpfile
 from multiprocessing import Pool
 from itertools import repeat
 
-from commandbench.time import timedelta
+from commandbench.time import parsetimedelta
 from commandbench.cli.interface import init_display, output_results
 
 
@@ -61,7 +61,7 @@ class Controller:
                     except ValueError: 
                         continue
                     single_labels.append(stat_type)
-                    single_stats.append(timedelta.from_string(time))
+                    single_stats.append(parsetimedelta(time))
 
                 stats.append(single_stats)
            
