@@ -10,7 +10,7 @@ You can run CommandBench from this directory with installing:
 
 Example:
 
-    $ ./cb -n 10 "find $HOME -name '*.py'" "find $HOME | grep .py"
+    $ ./cb -q -n 10 "find $HOME -name '*.py'" "find $HOME | grep .py"
 
     Benchmarking command(s) 10 times (concurrency 1)
     Please be patient...
@@ -24,7 +24,7 @@ Example:
 
 Benchmarks can also be run in a xargs-like manner:
 
-    $ cb -a "`find . -name "*.py"`" ls   
+    $ cb -q -a "`find . -name "*.py"`" ls   
 
     Benchmarking command(s) 1 times (concurrency 1)
     Please be patient...

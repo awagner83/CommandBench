@@ -36,7 +36,7 @@ def main():
     parser.add_option('-c', '--concurrency', type='int', default=1,
             help='maximum number of processes to run simultaneously '
                  '(default: 1)')
-    parser.add_option('-q', '--quiet', action='store_true', 
+    parser.add_option('-q', '--quiet', action='count', default=0,
             help='Suppress intro and only output final benchmark data')
     parser.add_option('-a', '--args',
             help='Run given command once for, and with, the given arg list.  '

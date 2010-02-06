@@ -40,13 +40,15 @@ class Controller:
     def run(self):
         """Benchmark process main loop."""
         # Output initial greeting/please wait message
-        if not self.display_options['quiet']:
+        if self.display_options['quiet'] < 2:
             init_display(self)
 
         # Run benchmark
         results = []
         for command in self.commands:
-            results.append( self.run_command( command ) )
+            if not self.display_options['quiet']:
+                print 'benching "%s"...' % command
+            results.append(self.run_command(command))
 
         # Parse results
         labels = []
