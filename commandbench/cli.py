@@ -38,13 +38,16 @@ def init_display(controller):
 def output_results(stats, labels, display_options):
     """Output results table."""
 
+    # Columns are all averages, reflect in labels
+    labels[1:] = ["%s (avg)" % label for label in labels[1:]]
+
     # Aggregate Methods
     time_sum = partial(reduce, lambda x, y: x+y)
     average = lambda vals: time_sum(vals) / len(vals)
 
     # Setup DataGrid
     grid = DataGrid(stats, labels, 
-        aggregate={"real": average, "user": average, "sys": average},
+        aggregate=dict((label, average) for label in labels[1:]),
         groupby=['command'], suppressdetail=True)
     print "\n", grid.render(ascii.Renderer())
 

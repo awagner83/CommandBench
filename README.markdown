@@ -18,7 +18,7 @@ Example:
     Benchmarking command(s) 10 times (concurrency 1)
     Please be patient...
 
-    command                           real             user             sys              
+    command                           real (avg)       user (avg)       sys (avg)        
     =====================================================================================
     find /home/awagner -name '*.py'   0:00:00.588300   0:00:00.270400   0:00:00.313700   
     find /home/awagner | grep .py     0:00:00.540100   0:00:00.224100   0:00:00.336600   
