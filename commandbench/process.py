@@ -24,7 +24,7 @@ from multiprocessing import Pool
 from itertools import repeat
 
 from commandbench.time import parsetimedelta
-from commandbench.cli.interface import init_display, output_results
+from commandbench.cli import init_display, output_results
 
 
 class Controller:
@@ -40,7 +40,8 @@ class Controller:
     def run(self):
         """Benchmark process main loop."""
         # Output initial greeting/please wait message
-        init_display(self, self.display_options)
+        if not self.display_options['quiet']:
+            init_display(self)
 
         # Run benchmark
         results = []

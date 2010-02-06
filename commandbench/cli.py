@@ -19,29 +19,19 @@
 """CLI Output Methods."""
 
 from commandbench.about import copyright_line
-from commandbench.cli.helpers import bold
 from functools import partial
 
 from datagrid.core import DataGrid
 from datagrid.renderer import ascii
 
 
-def init_display(controller, display_options):
+def init_display(controller):
     """Welcome/Startup output."""
-
-    # Check for quite flag
-    if display_options['quiet']: 
-        return None
-
-    # Build app intro
-    intro = "Benchmarking command(s) {rep} times (concurrency {concurrency})"
 
     # Print intro
     print copyright_line, "\n"
-    print intro.format( cmd=' and '.join([str(bold(c)) 
-        for c in controller.commands]), \
-            rep=controller.repetitions,\
-            concurrency=controller.concurrency )
+    print ("Benchmarking command(s) %s times (concurrency %s)" %
+            (controller.repetitions, controller.concurrency))
     print "Please be patient..."
     
 
