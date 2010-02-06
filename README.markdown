@@ -10,24 +10,20 @@ You can run CommandBench from this directory with installing:
 
 Example:
 
-    $ ./cb -n 50 \
-        "find . -name '*pyc*'" \
-        "find . -name '*pyc'" \
-        "find . | grep pyc"
+    $ ./cb -n 10 "find $HOME -name '*.py'" "find $HOME | grep .py"
 
     This is CommandBench v0.3b, http://github.com/awagner83/CommandBench/
-    Copyright (C) 2009-2010 Adam Wagner <awagner83@gmail.com>
+    Copyright (C) 2009 Adam Wagner <awagner83@gmail.com> 
 
-    Benchmarking command(s) 50 times (concurrency 1)
+    Benchmarking command(s) 10 times (concurrency 1)
     Please be patient...
 
-    command                  real      user      sys
-    =======================================================
-    find ../ -name '*pyc'    0.07432    0.0241      0.05
-    find ../ -name '*pyc*'   0.07416    0.0242   0.04976
-    find ../ | grep pyc      0.06932   0.01908   0.05264
-    =======================================================
-                              0.0726   0.02246    0.0508
+    command                           real             user             sys              
+    =====================================================================================
+    find /home/awagner -name '*.py'   0:00:00.588300   0:00:00.270400   0:00:00.313700   
+    find /home/awagner | grep .py     0:00:00.540100   0:00:00.224100   0:00:00.336600   
+    =====================================================================================
+                                      0:00:00.564200   0:00:00.247250   0:00:00.325150  
 
 
 Dependencies
