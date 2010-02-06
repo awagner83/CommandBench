@@ -28,17 +28,36 @@ def main():
     from optparse import OptionParser
     
     # Parse command-line opts
-    parser = OptionParser( 'Usage: %prog [options] "COMMAND" ["COMMAND_2"] .. ["COMMAND_N"]', 
+    parser = OptionParser('Usage: %prog [options] "COMMAND" '
+                          '["COMMAND_2"] .. ["COMMAND_N"]', 
             version=about.NAME + ' ' + about.VERSION )
     parser.add_option('-n', '--number', dest='repetitions', type='int',
             help='number of times to repeat COMMAND (default: 1)', default=1)
     parser.add_option('-c', '--concurrency', type='int', default=1,
-            help='maximum number of processes to run simultaneously (default: 1)')
+            help='maximum number of processes to run simultaneously '
+                 '(default: 1)')
     parser.add_option('-q', '--quiet', action='store_true', 
             help='Suppress intro and only output final benchmark data')
+    parser.add_option('-a', '--args',
+            help='Run given command once for, and with, the given arg list.  '
+                 'NOTE - only one command can be specified when using this '
+                 'option.')
     options, commands = parser.parse_args()
 
-    if len( commands ):
+    if len(commands):
+        # Check for 'xargs-style' mode
+        if options.args:
+            if len(commands) > 1:
+                parser.error("only one command can be specified when using "
+                        "the -a (--args) option")
+
+            args = options.args.split()
+            if not args:
+                parser.error("nothing was supplied to the --args option")
+
+            # build new command list
+            commands = ["%s %s" % (commands[0], arg) for arg in args]
+
         # Create controller and execute
         Controller(commands, options.repetitions, options.concurrency,
                 vars(options)).run()
@@ -47,5 +66,6 @@ def main():
         parser.print_help()
 
 
-if __name__ == '__main__': main()
+if __name__ == '__main__': 
+    main()
 
