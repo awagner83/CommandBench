@@ -45,10 +45,11 @@ class Controller:
 
         # Run benchmark
         results = []
+        progress = lambda x: 100 * (float(x) / len(self.commands))
         try:
-            for command in self.commands:
+            for n, command in enumerate(self.commands):
                 if not self.display_options['quiet']:
-                    print 'benching "%s"...' % command
+                    print 'benching (%4.1f%%) "%s"... ' % (progress(n), command)
                 results.append(self.run_command(command))
         except KeyboardInterrupt:
             print "\nKeyboard Interrupt Caught... " \
