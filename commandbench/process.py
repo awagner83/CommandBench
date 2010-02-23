@@ -19,12 +19,13 @@
 """Application Process Classes"""
 
 from subprocess import Popen
-from os import tmpfile
+from os import tmpfile, getcwd, path
 from multiprocessing import Pool
 from itertools import repeat
 
 from commandbench.time import parsetimedelta
 from commandbench.cli import init_display, output_results
+from commandbench.persist import BenchDB, stat_list
 
 
 class Controller:
@@ -36,6 +37,10 @@ class Controller:
         self.repetitions = repetitions or 1
         self.concurrency = concurrency or 1
         self.display_options = display_options or {}
+        self.cwd = getcwd()
+        self.dbpath = path.expanduser("~/.commandbench.sqlite3")
+        self.db = BenchDB(self.dbpath)
+
 
     def run(self):
         """Benchmark process main loop."""
@@ -49,7 +54,14 @@ class Controller:
         try:
             for n, command in enumerate(self.commands):
                 if not self.display_options['quiet']:
-                    print 'benching (%4.1f%%) "%s"... ' % (progress(n), command)
+                    # fetch prev bench time
+                    try:
+                        addedtime, oldtime = self.db.get(self.cwd, command)
+                        print ('benching (%4.1f%%) "%s"...'
+                                '\n\tprevious time: %s on %s' 
+                                % (progress(n), command, oldtime[0], addedtime))
+                    except TypeError:
+                        print 'benching (%4.1f%%) "%s"... ' % (progress(n), command)
                 results.append(self.run_command(command))
         except KeyboardInterrupt:
             print "\nKeyboard Interrupt Caught... " \
@@ -83,6 +95,9 @@ class Controller:
                     labels = single_labels
 
         output_results(stats, labels, self.display_options) 
+
+        # Record found results
+        BenchDB(self.dbpath).putmany([self.cwd] + x for x in stat_list(stats))
 
 
     def run_command(self, command):
@@ -123,4 +138,5 @@ def run_command(command):
 
     except KeyboardInterrupt:
         return ''
+
 
