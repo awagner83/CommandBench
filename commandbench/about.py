@@ -23,7 +23,7 @@ DESCRIPTION = 'All-purpose application benchmarking tool'
 WEBSITE = 'http://github.com/awagner83/CommandBench/'
 AUTHOR = 'Adam Wagner'
 EMAIL = 'awagner83@gmail.com'
-VERSION = '0.3'
+VERSION = '0.4'
 COPYRIGHT_YEAR = '2009-2010'
 LICENSE = 'GNU General Public License (GPL)'
 
