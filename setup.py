@@ -17,7 +17,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #------------------------------------------------------------------------#
 
-from distutils.core import setup
+from setuptools import setup
 from commandbench import about
 
 setup(  name = about.NAME,
@@ -29,6 +29,7 @@ setup(  name = about.NAME,
         license = about.LICENSE,
         packages = ['commandbench'],
         data_files = [('bin', ['cb'])],
+        install_requires = ['datagrid'],
         classifiers = ['Programming Language :: Python',
             'License :: OSI Approved :: GNU General Public License (GPL)',
             'Environment :: Console',
